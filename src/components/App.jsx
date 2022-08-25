@@ -25,11 +25,7 @@ export class App extends Component {
     filter: '',
   };
   formSubmitHandler = data => {
-    let doubleContacts = 0;
-    for (const contact of this.state.contacts)
-      contact.name === data.name && (doubleContacts += 1);
-
-    doubleContacts !== 0
+    this.state.contacts.some(contact => contact.name === data.name)
       ? alert(`${data.name} is alredy in your contacts`)
       : this.setState(prevState => ({
           contacts: [data, ...prevState.contacts],
