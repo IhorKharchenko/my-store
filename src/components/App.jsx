@@ -48,14 +48,14 @@ export class App extends Component {
 
   render() {
     return (
-      <Box as="main" p="4" ml="auto" mr="auto" bg="secondaryText">
+      <Box as="main" p="4">
         <SearchBar onSubmit={this.handleFormSubmit} />
         {this.state.isLoading ? (
           <Loader />
         ) : (
           <ImageGallery images={this.state.images} />
         )}
-        {/* <ImageGallery images={this.state.images} /> */}
+
         {this.state.images.length > 0 && <Button onClick={this.loadMore} />}
       </Box>
     );

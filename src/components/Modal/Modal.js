@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import * as SM from './Modal.styled';
-import { createPortal } from 'react-dom';
-// import { StyledBackdrop, StyledContent } from './Modal.styled';
-
-const modalRoot = document.querySelector('#modal-root');
 
 export class Modal extends Component {
   componentDidMount() {
@@ -24,11 +20,10 @@ export class Modal extends Component {
     }
   };
   render() {
-    return createPortal(
+    return (
       <SM.StyledBackdrop onClick={this.handleBackdropClick}>
         <SM.StyledContent>{this.props.children}</SM.StyledContent>
-      </SM.StyledBackdrop>,
-      modalRoot
+      </SM.StyledBackdrop>
     );
   }
 }

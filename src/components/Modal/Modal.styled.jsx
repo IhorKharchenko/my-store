@@ -17,7 +17,7 @@ export const StyledContent = styled.div`
   min-width: 600px;
   min-height: 300px;
   /* width: 100%; */
-  padding: 12px;
+  padding: 4px;
   background-color: ${props => props.theme.colors.white};
   border-radius: 3px;
   box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
