@@ -5,6 +5,8 @@ import * as API from './services/api';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 export class App extends Component {
@@ -27,12 +29,18 @@ export class App extends Component {
     try {
       this.setState({ isLoading: true });
       const images = await API.getImages(searchText, page);
-      this.setState(state => ({
-        images: [...state.images, ...images],
-        isLoading: false,
-      }));
+      if (images.length === 0) {
+        toast.error(`There are no '${searchText}' images`);
+        this.setState({ isLoading: false });
+        return;
+      } else {
+        this.setState(state => ({
+          images: [...state.images, ...images],
+          isLoading: false,
+        }));
+      }
     } catch (error) {
-      console.log(error);
+      toast.warn(error);
     }
   };
   handleFormSubmit = ({ searchText }) => {
@@ -57,6 +65,17 @@ export class App extends Component {
         )}
 
         {this.state.images.length > 0 && <Button onClick={this.loadMore} />}
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </Box>
     );
   }
