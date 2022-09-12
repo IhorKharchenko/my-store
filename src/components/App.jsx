@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from 'components/Box';
 import { SearchBar } from './SearchBar/SearchBar';
 import * as API from './services/api';
@@ -8,84 +8,74 @@ import { Loader } from './Loader/Loader';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-export class App extends Component {
-  state = {
-    searchText: '',
-    images: [],
-    page: 1,
-    isLoading: false,
-  };
-  componentDidUpdate(prevProps, prevState) {
-    const prevText = prevState.searchText;
-    const nextText = this.state.searchText;
-    const { page } = this.state;
-    if (prevText !== nextText || prevState.page !== page) {
-      this.searchImages(nextText, page);
-    }
-  }
+export const App = () => {
+  const [searchText, setSearchText] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  searchImages = async (searchText, page) => {
+  useEffect(() => {
+    if (!searchText) {
+      return;
+    }
+    searchImages(searchText, page);
+  }, [page, searchText]);
+
+  const searchImages = async (query, page) => {
     try {
       if (page === 1) {
-        this.setState({ isLoading: true });
+        setIsLoading(true);
       }
-
-      const images = await API.getImages(searchText, page);
+      const images = await API.getImages(query, page);
       if (images.length === 0) {
-        toast.error(`There are no '${searchText}' images`);
-        this.setState({ isLoading: false });
+        toast.error(`There are no '${query}' images`);
+        setIsLoading(false);
         return;
       } else {
-        this.setState(state => ({
-          images: [...state.images, ...images],
-          isLoading: false,
-        }));
+        setImages(prevState => [...prevState, ...images]);
+        setIsLoading(false);
       }
     } catch (error) {
       toast.warn(error);
     }
   };
-  handleFormSubmit = ({ searchText }) => {
-    this.setState({
-      searchText,
-      page: 1,
-      images: [],
-    });
+
+  const handleFormSubmit = query => {
+    if (!query) {
+      toast.info(`Please enter some text to search`);
+      return;
+    }
+    if (query !== searchText) {
+      setSearchText(query);
+      setPage(1);
+      setImages([]);
+    } else
+      toast.info(
+        `You've just done '${searchText}' search before. If you want more '${searchText}' images, please click the 'Load more' button below`
+      );
   };
-  loadMore = event => {
+
+  const loadMore = event => {
     event.preventDefault();
-    this.setState(prevState => ({
-      isLoading: false,
-      page: prevState.page + 1,
-    }));
+    setIsLoading(false);
+    setPage(prevState => prevState + 1);
   };
+  return (
+    <Box as="main" p="4">
+      <SearchBar onSubmit={handleFormSubmit} />
+      {isLoading ? <Loader /> : <ImageGallery images={images} />}
 
-  render() {
-    return (
-      <Box as="main" p="4">
-        <SearchBar onSubmit={this.handleFormSubmit} />
-        {this.state.isLoading ? (
-          <Loader />
-        ) : (
-          <ImageGallery images={this.state.images} />
-        )}
-
-        {this.state.images.length > 0 && (
-          <Button onClick={event => this.loadMore(event)} />
-        )}
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-      </Box>
-    );
-  }
-}
+      {images.length > 0 && <Button onClick={event => loadMore(event)} />}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </Box>
+  );
+};

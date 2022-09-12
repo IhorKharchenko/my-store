@@ -1,7 +1,7 @@
-import { Field, Form, Formik } from 'formik';
+import { Field, Form, Formik, FormikContext } from 'formik';
 
 export const SearchBar = ({ onSubmit }) => {
-  const handleSubmit = async (searchText, { resetForm }) => {
+  const handleSubmit = async ({ searchText }, { resetForm }) => {
     await onSubmit(searchText);
     resetForm();
   };
@@ -15,7 +15,7 @@ export const SearchBar = ({ onSubmit }) => {
           autoFocus
           placeholder="Search images and photos"
         />
-        <button type="submit">
+        <button type="submit" disabled={FormikContext.values === ''}>
           <span>Search</span>
         </button>
       </Form>
