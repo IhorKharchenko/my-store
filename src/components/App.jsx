@@ -27,7 +27,10 @@ export class App extends Component {
 
   searchImages = async (searchText, page) => {
     try {
-      this.setState({ isLoading: true });
+      if (page === 1) {
+        this.setState({ isLoading: true });
+      }
+
       const images = await API.getImages(searchText, page);
       if (images.length === 0) {
         toast.error(`There are no '${searchText}' images`);
@@ -50,8 +53,12 @@ export class App extends Component {
       images: [],
     });
   };
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  loadMore = event => {
+    event.preventDefault();
+    this.setState(prevState => ({
+      isLoading: false,
+      page: prevState.page + 1,
+    }));
   };
 
   render() {
@@ -64,7 +71,9 @@ export class App extends Component {
           <ImageGallery images={this.state.images} />
         )}
 
-        {this.state.images.length > 0 && <Button onClick={this.loadMore} />}
+        {this.state.images.length > 0 && (
+          <Button onClick={event => this.loadMore(event)} />
+        )}
         <ToastContainer
           position="top-center"
           autoClose={3000}
