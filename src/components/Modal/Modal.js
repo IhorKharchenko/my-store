@@ -4,10 +4,7 @@ import * as SM from './Modal.styled';
 
 export const Modal = ({ onClose, children }) => {
   const handleBackdropClick = event => {
-    console.log(event.currentTarget);
-    console.log(event.target);
     if (event.target === event.currentTarget) {
-      console.log('Таргети рівні');
       onClose();
     }
   };
