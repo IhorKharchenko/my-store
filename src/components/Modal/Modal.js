@@ -24,35 +24,8 @@ export const Modal = ({ onClose, children }) => {
   }, [handleKeyDown]);
 
   return (
-    <SM.StyledBackdrop onClick={handleBackdropClick}>
+    <SM.StyledBackdrop onClick={event => handleBackdropClick(event)}>
       <SM.StyledContent>{children}</SM.StyledContent>
     </SM.StyledBackdrop>
   );
 };
-
-// class OldModal extends Component {
-//   componentDidMount() {
-//     window.addEventListener('keydown', this.handleKeyDown);
-//   }
-//   componentWillUnmount() {
-//     window.removeEventListener('keydown', this.handleKeyDown);
-//   }
-
-//   handleKeyDown = event => {
-//     if (event.code === 'Escape') {
-//       this.props.onClose();
-//     }
-//   };
-//   handleBackdropClick = event => {
-//     if (event.currentTarget === event.target) {
-//       this.props.onClose();
-//     }
-//   };
-//   render() {
-//     return (
-//       <SM.StyledBackdrop onClick={this.handleBackdropClick}>
-//         <SM.StyledContent>{this.props.children}</SM.StyledContent>
-//       </SM.StyledBackdrop>
-//     );
-//   }
-// }

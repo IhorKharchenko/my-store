@@ -10,14 +10,16 @@ export const ImageGalleryItem = ({ image }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <StyledGalleryListItem onClick={() => setIsModalOpen(true)}>
-      <StyledGalleryListImage src={image.webformatURL} alt={image.tags} />
+    <>
+      <StyledGalleryListItem onClick={() => setIsModalOpen(true)}>
+        <StyledGalleryListImage src={image.webformatURL} alt={image.tags} />
+      </StyledGalleryListItem>
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
           <StyledGalleryLargeImage src={image.largeImageURL} alt="" />
         </Modal>
       )}
-    </StyledGalleryListItem>
+    </>
   );
 };
 // class OldImageGalleryItem extends Component {
