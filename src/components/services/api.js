@@ -1,12 +1,23 @@
 import axios from 'axios';
 
-// https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12
-axios.defaults.baseURL = 'https://pixabay.com/api/';
+axios.defaults.baseURL = 'https://6313917aa8d3f673ffcd5436.mockapi.io';
 
-export const getImages = async (searchText, page) => {
-  const MY_KEY = '20010595-066be8f27561d2bd832683e36';
-  const response = await axios.get(
-    `?q=${searchText}&page=${page}&key=${MY_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-  );
-  return response.data.hits;
+export const addMaterial = async values => {
+  const response = await axios.post('/materials', values);
+  return response.data;
+};
+
+export const getMaterials = async () => {
+  const response = await axios.get('/materials');
+  return response.data;
+};
+
+export const deleteMaterial = async id => {
+  const response = await axios.delete(`/materials/${id}`);
+  return response.data;
+};
+
+export const updateMaterial = async fields => {
+  const response = await axios.put(`/materials/${fields.id}`, fields);
+  return response.data;
 };

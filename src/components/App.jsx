@@ -1,81 +1,96 @@
 import { useEffect, useState } from 'react';
 import { Box } from 'components/Box';
-import { SearchBar } from './SearchBar/SearchBar';
 import * as API from './services/api';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { toast, ToastContainer } from 'react-toastify';
+import { Materials } from './Materials/Materials';
+import { MaterialEditorForm } from './Materials/MaterialEditorForm';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const App = () => {
-  const [searchText, setSearchText] = useState('');
-  const [images, setImages] = useState([]);
-  const [page, setPage] = useState(1);
+  const [materials, setMaterials] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  //////////
   useEffect(() => {
-    if (!searchText) {
-      return;
-    }
-    searchImages(searchText, page);
-  }, [page, searchText]);
-
-  const searchImages = async (query, page) => {
-    try {
-      if (page === 1) {
-        setIsLoading(true);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const materials = await API.getMaterials();
+        if (materials.length === 0) {
+          setIsLoading(false);
+          return;
+        } else {
+          setMaterials([...materials]);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        toast.error({ error });
       }
-      const images = await API.getImages(query, page);
-      if (images.length === 0) {
-        toast.error(`There are no '${query}' images`);
-        setIsLoading(false);
-        return;
-      } else {
-        setImages(prevState => [...prevState, ...images]);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      toast.warn(error);
-    }
-  };
+    };
+    console.log(materials);
+    fetchData();
+    return;
+  }, []);
+  // async componentDidMount() {
+  //   try {
+  //     this.setState({ isLoading: true });
+  //     const materials = await API.getMaterials();
+  //     this.setState({ materials, isLoading: false });
+  //   } catch (error) {
+  //     toast.error({ error });
+  //   }
+  // }
 
-  const handleFormSubmit = query => {
-    if (!query) {
-      toast.info(`Please enter some text to search`);
-      return;
-    }
-    if (query !== searchText) {
-      setSearchText(query);
-      setPage(1);
-      setImages([]);
-    } else
-      toast.info(
-        `You've just done '${searchText}' search before. If you want more '${searchText}' images, please click the 'Load more' button below`
-      );
-  };
+  // addMaterial = async values => {
+  //   try {
+  //     const material = await API.addMaterial(values);
+  //     this.setState(state => ({
+  //       materials: [...state.materials, material],
+  //     }));
+  //   } catch (error) {
+  //     toast.error({ error });
+  //   }
+  // };
 
-  const loadMore = event => {
-    event.preventDefault();
-    setIsLoading(false);
-    setPage(prevState => prevState + 1);
-  };
+  // deleteMaterial = async id => {
+  //   try {
+  //     await API.deleteMaterial(id);
+  //     this.setState(state => ({
+  //       materials: state.materials.filter(material => material.id !== id),
+  //     }));
+  //   } catch (error) {
+  //     toast.error({ error });
+  //   }
+  // };
+
+  // updateMaterial = async fields => {
+  //   try {
+  //     const updatedMaterial = await API.updateMaterial(fields);
+  //     this.setState(state => ({
+  //       materials: state.materials.map(material =>
+  //         material.id === fields.id ? updatedMaterial : material
+  //       ),
+  //     }));
+  //   } catch (error) {
+  //     toast.error({ error });
+  //   }
+  // };
+  //////////
   return (
     <Box as="main" p="4">
-      <SearchBar onSubmit={handleFormSubmit} />
-      {isLoading ? <Loader /> : <ImageGallery images={images} />}
+      {/* <MaterialEditorForm onSubmit={this.addMaterial} /> */}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Materials
+          items={materials}
+          // onDelete={this.deleteMaterial}
+          // onUpdate={this.updateMaterial}
+        />
+      )}
 
-      {images.length > 0 && <Button onClick={event => loadMore(event)} />}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer autoClose={3000} position="top-center" />
     </Box>
   );
 };
