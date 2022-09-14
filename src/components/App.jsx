@@ -30,7 +30,6 @@ export const App = () => {
     };
     console.log(materials);
     fetchData();
-    return;
   }, [materials]);
   // async componentDidMount() {
   //   try {
