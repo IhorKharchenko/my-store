@@ -14,23 +14,23 @@ export const App = () => {
   //////////
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
         const materials = await API.getMaterials();
         if (materials.length === 0) {
           setIsLoading(false);
           return;
         } else {
           setMaterials([...materials]);
+          console.log(materials);
           setIsLoading(false);
         }
       } catch (error) {
         toast.error({ error });
       }
     };
-    console.log(materials);
     fetchData();
-  }, [materials]);
+  }, []);
   // async componentDidMount() {
   //   try {
   //     this.setState({ isLoading: true });
